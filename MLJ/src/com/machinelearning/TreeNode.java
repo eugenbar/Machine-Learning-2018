@@ -1,17 +1,18 @@
 package com.machinelearning;
 
-import java.util.Iterator;
-import java.util.LinkedList;
-import java.util.List;
+import java.util.*;
 
 public class TreeNode<D,A> implements Iterable<TreeNode<D,A>> {
 
     private D decision;
     private A att;
+    private int[] classCounts;
+    private double[] classValues;
     private TreeNode<D,A> parent;
     private List<TreeNode<D,A>> children;
     private boolean root=false;
     private double entropy=0;
+    private int depth = 0;
 
 
 
@@ -22,9 +23,10 @@ public class TreeNode<D,A> implements Iterable<TreeNode<D,A>> {
     }
 
 
-    public TreeNode<D,A> addChild(D childD,A childA) {
-        TreeNode<D,A> childNode = new TreeNode<D,A>(childD,childA);
+    public TreeNode<D,A> addChild(D d,A a) {
+        TreeNode<D,A> childNode = new TreeNode<D,A>(d,a);
         childNode.parent = this;
+        childNode.setDepth(this.depth+1);
         this.children.add(childNode);
         return childNode;
     }
@@ -91,6 +93,63 @@ public class TreeNode<D,A> implements Iterable<TreeNode<D,A>> {
         else {
             return 1+getParent().nodeLevel();
         }
+    }
+
+    public D getDecision() {
+        return decision;
+    }
+
+    public void setDecision(D decision) {
+        this.decision = decision;
+    }
+
+    public A getAtt() {
+        return att;
+    }
+
+    public void setAtt(A att) {
+        this.att = att;
+    }
+
+    public int[] getClassCounts() {
+        return classCounts;
+    }
+    public void setClassCounts(int[] classCounts) {
+        this.classCounts=classCounts;
+        int sum = 0;
+        double[]cv = new double[classCounts.length];
+        for(int i=0;i<classCounts.length;i++){
+            cv[i] = classCounts[i];
+            sum+=classCounts[i];
+        }
+        for (int i=0;i<cv.length;i++){
+            cv[i] = cv[i]/sum;
+        }
+        this.classValues = cv;
+    }
+
+    public void setParent(TreeNode<D, A> parent) {
+        this.parent = parent;
+    }
+
+    public void setChildren(List<TreeNode<D, A>> children) {
+        this.children = children;
+    }
+
+    public void setRoot(boolean root) {
+        this.root = root;
+    }
+
+    public void setDepth(int depth) {
+        this.depth = depth;
+    }
+
+    public int getDepth() {
+        return depth;
+    }
+
+    public double[] getClassValues() {
+        return classValues;
     }
 
     @Override

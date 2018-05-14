@@ -1,12 +1,6 @@
 package com.machinelearning;
 
 import java.awt.BorderLayout;
-import java.awt.event.WindowAdapter;
-import java.awt.event.WindowEvent;
-import java.io.BufferedReader;
-import java.io.FileReader;
-
-import javax.swing.JFrame;
 
 import weka.classifiers.trees.J48;
 import weka.core.Instances;
@@ -24,7 +18,7 @@ public class VisualizeJ48 {
     public static void main(String args[]) throws Exception {
         // train classifier
         J48 cls = new J48();
-        String filename = "weather.nominal.arff";
+        String filename = "weather.arff";
         ConverterUtils.DataSource source = new ConverterUtils.DataSource(filename);
         Instances data = source.getDataSet();
         data.setClassIndex(data.numAttributes() - 1);
