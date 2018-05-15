@@ -105,7 +105,7 @@ public class DecisionTree<D,A> {
                 attL.add(d.attribute(x));
             }
         }
-        double maxGain = 0;
+        double maxGain = -1;
         int purestAtt = -1;
         double entropy=0;
         if(node.isRoot()){
@@ -115,7 +115,7 @@ public class DecisionTree<D,A> {
         for(Attribute attr:attL){
             //System.out.println(attr);
             double igain = informationGain(d,null,attr);
-            if(igain>maxGain){
+            if(igain>0 && (igain<maxGain || maxGain==-1)){
                 maxGain=igain;
                 purestAtt = attL.indexOf(attr);
             }
@@ -191,15 +191,20 @@ public class DecisionTree<D,A> {
             }
         };
     }
-    public double predict(Instance entry,Instances ins){
+    public double predict(Instance entry){
         TreeNode<D,A> node=this.treeRoot;
         int correctIndex = entry.classAttribute().indexOfValue(entry.stringValue(entry.classAttribute()));
         while (!node.isLeaf()){
+            boolean b = node.isLeaf();
             for(TreeNode<D,A> ch:node.getChildren()) {
-                if(ins.attribute((String) node.getD()).equals(ch.getA())){
-                    node = ch;
+                for(int i=0;i<entry.numAttributes();i++) {
+                    if (entry.stringValue(entry.attribute(i)).equals(ch.getD())) {
+                        node = ch;
+                        break;
+                    }
                 }
             }
+
         }
         int max = -1;
         int maxIndex=-1;
@@ -217,26 +222,35 @@ public class DecisionTree<D,A> {
         }
         this.predictions.get(this.predictions.size()-1)[node.getClassCounts().length]
                 = entry.classAttribute().indexOfValue(entry.stringValue(entry.classAttribute()));
+        //for(int i:node.getClassCounts()) {
+        //    System.out.print(i+" | ");
+        //}
+        //System.out.println(entry.classAttribute().indexOfValue(
+        //        entry.stringValue(entry.classAttribute())));
         return node.getClassValues()[correctIndex];//entry.classAttribute().value(maxIndex);
     }
     public double predict(Instances instances){
         double accuracy = 0;
         for (Instance i:instances){
-            accuracy+=this.predict(i,instances);
+            accuracy+=this.predict(i);
         }
-        /*
+        double acc=0;
         for (int[]i:this.predictions){
             int sum = 0;
+            int max = 0;
             for(int x = 0;x<i.length-1;x++){
                 sum+=i[x];
-                System.out.print(i[x]+"|");
+                if (i[x]>max)max=i[x];
+        //        System.out.print(i[x]+"/");
             }
-            System.out.println(i[i.length-1]);
-            accuracy+=(double)i[i.length-1]/(double)sum;
-        }*/
-        //System.out.println(accuracy);
+        //    System.out.println(i[i.length-1]+" --- "+sum+"---"+(double)i[i[i.length-1]]/(double)sum+" /// "+
+        //            (double)i[i.length-1]);
+            if (max==i[i[i.length-1]])acc+=1;
+            //acc+=(double)i[i[i.length-1]]/(double)sum;
+        }
+        //System.out.println(acc/instances.numInstances());
         //System.out.println(instances.numInstances());
-        return accuracy/instances.numInstances();
+        return acc/(double)instances.numInstances();
     }
     public void setMaxDepth(int i){
         this.maxDepth=i;

@@ -69,7 +69,7 @@ public class TreeNode<D,A> implements Iterable<TreeNode<D,A>> {
         return this.children;
     }
     public boolean isLeaf(){
-        if(this.getChildren()==null){
+        if(this.getChildren()==null ||this.getChildren().isEmpty()){
             return true;
         }
         else {
