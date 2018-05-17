@@ -34,7 +34,7 @@ public class Sheet3 {
                 sampleTrainSet.add(trainSet.instance((int)Math.random()*trainSize));
             }
             dts.add(new DecisionTree());
-            dts.get(dts.size()-1).buildTree(sampleTrainSet);
+            dts.get(dts.size()-1).build(sampleTrainSet);
         }
 
         double sum=0;

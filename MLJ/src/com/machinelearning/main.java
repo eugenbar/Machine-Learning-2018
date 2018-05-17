@@ -14,9 +14,11 @@ public class main {
         Instances instances = source.getDataSet();
         instances.setClassIndex(classAttributeIndex);
         Instances in2 = new Instances(instances,1);
+
+        System.out.println("--"+instances.get(instances.size()-1).classValue());
         in2.addAll(instances);
-        double[]results = new double[10];
-        for(int i=0;i<10;i++) {
+        double[]results = new double[1];
+        for(int i=0;i<1;i++) {
             System.out.println("-------------------------");
             instances.delete();
             instances.addAll(in2);
@@ -32,19 +34,28 @@ public class main {
             testSet.addAll(instances);
             //  instances.delete();
             DecisionTree dt = new DecisionTree();
-            dt.setMaxDepth(4);
-            dt.buildTree(trainSet);
+            dt.setMaxDepth(2);
+            dt.build(trainSet);
 
-            dt.printTree();
+            dt.print();
 
             //Testing a single entry
             // System.out.println(testSet.instance(0).stringValue(classAttributeIndex)
             // + "---"+dt.predict(testSet.instance(0)));
             System.out.println();
             //Testing whole test set
-            results[i] = dt.predict(testSet);
+            dt.predict(testSet);
+            results[i] = dt.getAccuracy(testSet);
             //System.out.println(dt.predict(testSet));
-
+            System.out.println((int)testSet.instance(0).classValue()+ "---"+
+                    (int)testSet.instance(1).classValue());
+            for(int y=0;y<5;y++){
+                System.out.print(testSet.instance(0).stringValue(testSet.attribute(y))+" | ");
+            }
+            System.out.println();
+            for(int y=0;y<5;y++){
+                System.out.print(testSet.instance(1).stringValue(testSet.attribute(y))+" | ");
+            }
         }
 
         double sum=0;
@@ -54,5 +65,6 @@ public class main {
         }
         System.out.println();
         System.out.println(sum/10);
+
     }
 }

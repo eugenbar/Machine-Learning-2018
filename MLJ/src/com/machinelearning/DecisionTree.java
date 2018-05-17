@@ -7,13 +7,10 @@ import weka.filters.unsupervised.attribute.Remove;
 
 import java.util.ArrayList;
 
-public class DecisionTree<D,A> {
+public class DecisionTree<D,A> extends Model {
     private TreeNode<D,A> treeRoot;
     private int maxDepth=-1;//Default -1: no max depth
     private double rootEntropy;
-    //List<>[] Array for every entry. Contains indices of class values classified to one leaf
-    //Last Array entry contains index of the correct class value
-    private ArrayList<int[]> predictions = new ArrayList<>();
 
     DecisionTree(D decision,A att){
         treeRoot = new TreeNode<D,A>(decision,null);
@@ -27,71 +24,8 @@ public class DecisionTree<D,A> {
         return this.treeRoot;
     }
 
-    public double entropyOnSubset(Instances inst,ArrayList<Integer>i){
-        Instances sa;
-        if(i==null){
-            sa=new Instances(inst,1);
-            sa.addAll(inst);
-        }
-        else {
-            sa=new Instances(inst,1);
-            for(int x:i){
-                sa.add(inst.instance(x));
-            }
-        }
-        sa.setClass(inst.classAttribute());
-        double entropy =0;
-        int[]factors = new int[sa.classAttribute().numValues()];
-        int n=inst.numInstances();
-        for(Instance sainst:sa){
-            factors[sa.classAttribute().indexOfValue(sainst.stringValue(sainst.classAttribute()))]+=1;
-        }
-        for(int x=0;x<factors.length;x++){
-            double factor = (double)factors[x]/(double)n;
-            if(factor==1 || factor == 0){
-                factor=0;
-            }
-            else {
-                entropy+=factor * Math.log10(factor)/Math.log10(2);
-            }
-        }
-        return -entropy;
-    }
-    public double informationGain(Instances d,ArrayList<Integer>i,Attribute a){
-        Instances s = new Instances(d,1);
-        double entropy = entropyOnSubset(d,i);
-        double gain = 0;
-        if(i==null){
-            s.addAll(d);
-        }
-        else {
-            for (Integer index : i) {
-                s.add(d.instance(index));
-            }
-        }
-        s.setClass(d.classAttribute());
-        int n = s.numInstances();
-        Instances []sv=new Instances[s.attribute(a.name()).numValues()];
-        for(int x = 0;x<sv.length;x++){
-            sv[x]=new Instances(s,1);
-            sv[x].setClass(s.classAttribute());
-        }
-        for (Instance inst : s) {
-            sv[a.indexOfValue(inst.stringValue(a))].add(inst);
-        }
 
-        for (int x=0;x<sv.length;x++) {
-            double factor = (double)sv[x].numInstances() / (double) n;
-            if (factor == 0 || factor == 1) {
-                factor = 0;
-            }
-            gain+=factor*entropyOnSubset(sv[x],null);
-
-
-        }
-        return entropy-gain;
-    }
-    public void buildTree(Instances d){
+    public void build(Instances d){
         this.buildTree(d, this.treeRoot);
     }
     public void buildTree(Instances d, TreeNode<D,A> node){
@@ -165,7 +99,7 @@ public class DecisionTree<D,A> {
             }
         }
     }
-    public void printTree(){
+    public void print(){
         //Call recursive method beginning at the root
         this.printTree(this.treeRoot);
     }
@@ -191,66 +125,22 @@ public class DecisionTree<D,A> {
             }
         };
     }
-    public double predict(Instance entry){
+    protected void predict(Instance entry){
         TreeNode<D,A> node=this.treeRoot;
         int correctIndex = entry.classAttribute().indexOfValue(entry.stringValue(entry.classAttribute()));
         while (!node.isLeaf()){
-            boolean b = node.isLeaf();
             for(TreeNode<D,A> ch:node.getChildren()) {
+                if(node.isLeaf())break;
                 for(int i=0;i<entry.numAttributes();i++) {
-                    if (entry.stringValue(entry.attribute(i)).equals(ch.getD())) {
+                    if (entry.stringValue(entry.attribute(i)).equals(ch.getD())
+                            && entry.attribute(i).name().equals(ch.getParent().getA())) {
                         node = ch;
                         break;
                     }
                 }
             }
-
         }
-        int max = -1;
-        int maxIndex=-1;
-        for(int i=0;i<node.getClassCounts().length;i++) {
-            if(node.getClassCounts()[i]>max){
-                max=node.getClassCounts()[i];
-                maxIndex=i;
-            }
-        }
-        //List<>[] Array for every entry. Contains indices of class values classified to one leaf
-        //Last Array entry contains index of the correct class value
-        this.predictions.add(new int[node.getClassCounts().length+1]);
-        for (int i = 0;i<node.getClassCounts().length;i++){
-            this.predictions.get(this.predictions.size()-1)[i]=node.getClassCounts()[i];
-        }
-        this.predictions.get(this.predictions.size()-1)[node.getClassCounts().length]
-                = entry.classAttribute().indexOfValue(entry.stringValue(entry.classAttribute()));
-        //for(int i:node.getClassCounts()) {
-        //    System.out.print(i+" | ");
-        //}
-        //System.out.println(entry.classAttribute().indexOfValue(
-        //        entry.stringValue(entry.classAttribute())));
-        return node.getClassValues()[correctIndex];//entry.classAttribute().value(maxIndex);
-    }
-    public double predict(Instances instances){
-        double accuracy = 0;
-        for (Instance i:instances){
-            accuracy+=this.predict(i);
-        }
-        double acc=0;
-        for (int[]i:this.predictions){
-            int sum = 0;
-            int max = 0;
-            for(int x = 0;x<i.length-1;x++){
-                sum+=i[x];
-                if (i[x]>max)max=i[x];
-        //        System.out.print(i[x]+"/");
-            }
-        //    System.out.println(i[i.length-1]+" --- "+sum+"---"+(double)i[i[i.length-1]]/(double)sum+" /// "+
-        //            (double)i[i.length-1]);
-            if (max==i[i[i.length-1]])acc+=1;
-            //acc+=(double)i[i[i.length-1]]/(double)sum;
-        }
-        //System.out.println(acc/instances.numInstances());
-        //System.out.println(instances.numInstances());
-        return acc/(double)instances.numInstances();
+        this.predictions.add(node.getClassCounts());
     }
     public void setMaxDepth(int i){
         this.maxDepth=i;
@@ -258,4 +148,5 @@ public class DecisionTree<D,A> {
     public int getMaxDepth(){
         return this.maxDepth;
     }
+
 }
