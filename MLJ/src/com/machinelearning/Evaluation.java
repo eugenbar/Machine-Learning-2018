@@ -6,7 +6,7 @@ import weka.core.Instances;
 
 import java.util.ArrayList;
 
-public class Ratios {
+public class Evaluation {
 
     public double entropyOnSubset(Instances inst, ArrayList<Integer> i){
         Instances sa;
@@ -72,5 +72,34 @@ public class Ratios {
 
         }
         return entropy-gain;
+    }
+    public int getArraySum(int[] intArray){
+        int sum =0;
+        for(int i=0;i<intArray.length;i++){
+            sum+=intArray[i];
+        }
+        return sum;
+    }
+    public double getArraySum(double[] doubleArray){
+        double sum =0;
+        for(int i=0;i<doubleArray.length;i++){
+            sum+=doubleArray[i];
+        }
+        return sum;
+    }
+    public double mean(double[]doubles){
+        double mean=0;
+        for(int i=0;i<doubles.length;i++){
+            mean+=doubles[i];
+        }
+        return mean/doubles.length;
+    }
+    public double sd(double[]doubles){
+        double mean = this.mean(doubles);
+        double sum =0;
+        for (int i=0;i<doubles.length;i++){
+            sum+=(doubles[i]-mean)*(doubles[i]-mean);
+        }
+        return Math.sqrt(sum/(doubles.length-1));
     }
 }

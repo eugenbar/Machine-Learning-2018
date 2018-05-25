@@ -26,8 +26,16 @@ public class DecisionTree<D,A> extends Model {
 
 
     public void build(Instances d){
+        treeRoot = new TreeNode("root",null);
+        treeRoot.setRoot();
         this.buildTree(d, this.treeRoot);
     }
+
+    @Override
+    public void plot() {
+        MyJframe jf = new MyJframe();
+    }
+
     public void buildTree(Instances d, TreeNode<D,A> node){
         if(node.isRoot()){//Setting class counts for the root, for the rest, class counts are set when the child is created
             node.setClassCounts(d.attributeStats(d.classIndex()).nominalCounts);

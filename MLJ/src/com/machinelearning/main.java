@@ -15,10 +15,12 @@ public class main {
         instances.setClassIndex(classAttributeIndex);
         Instances in2 = new Instances(instances,1);
 
+      //  MyJframe mj = new MyJframe();
+
         System.out.println("--"+instances.get(instances.size()-1).classValue());
         in2.addAll(instances);
-        double[]results = new double[1];
-        for(int i=0;i<1;i++) {
+        double[]results = new double[10];
+        for(int i=0;i<10;i++) {
             System.out.println("-------------------------");
             instances.delete();
             instances.addAll(in2);
@@ -34,7 +36,7 @@ public class main {
             testSet.addAll(instances);
             //  instances.delete();
             DecisionTree dt = new DecisionTree();
-            dt.setMaxDepth(2);
+           // dt.setMaxDepth(2);
             dt.build(trainSet);
 
             dt.print();
@@ -64,7 +66,7 @@ public class main {
             System.out.print(d+"---");
         }
         System.out.println();
-        System.out.println(sum/10);
+        System.out.println("mean accuracy: "+sum/10);
 
     }
 }
