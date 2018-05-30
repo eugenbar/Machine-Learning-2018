@@ -10,6 +10,8 @@ import weka.classifiers.trees.J48;
 import weka.core.Instance;
 import weka.core.Instances;
 
+import java.awt.image.BufferedImage;
+
 public class RandomForestsWeka extends Model {
     Classifier cls;
     Evaluation eval;
@@ -56,7 +58,9 @@ public class RandomForestsWeka extends Model {
     }
 
     @Override
-    public void plot() {
-
+    public BufferedImage getPlotBuffer() {
+        return null;
     }
+
+
 }

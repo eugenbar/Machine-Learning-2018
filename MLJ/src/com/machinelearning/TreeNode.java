@@ -19,7 +19,7 @@ public class TreeNode<D,A> implements Iterable<TreeNode<D,A>> {
     public TreeNode(D decision,A att) {
         this.decision = decision;
         this.att = att;
-        this.children = new LinkedList<TreeNode<D,A>>();
+        this.children = new ArrayList<>();
     }
 
 
@@ -60,7 +60,8 @@ public class TreeNode<D,A> implements Iterable<TreeNode<D,A>> {
         }
     }
     public A getA(){
-        return this.att;
+        if (att==null)return (A) "leaf";
+        else return this.att;
     }
     public TreeNode<D,A>getParent(){
         return parent;
@@ -150,6 +151,14 @@ public class TreeNode<D,A> implements Iterable<TreeNode<D,A>> {
 
     public double[] getClassValues() {
         return classValues;
+    }
+
+    public ArrayList<Integer> getClassCountsList(){
+        ArrayList<Integer> l = new ArrayList<Integer>();
+        for(int i:this.classCounts){
+            l.add(i);
+        }
+        return l;
     }
 
     @Override

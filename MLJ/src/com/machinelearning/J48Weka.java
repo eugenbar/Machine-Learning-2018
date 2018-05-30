@@ -6,6 +6,8 @@ import weka.classifiers.trees.J48;
 import weka.core.Instance;
 import weka.core.Instances;
 
+import java.awt.image.BufferedImage;
+
 public class J48Weka extends Model {
     Classifier cls;
     Evaluation eval;
@@ -52,7 +54,9 @@ public class J48Weka extends Model {
     }
 
     @Override
-    public void plot() {
-
+    public BufferedImage getPlotBuffer() {
+        return null;
     }
+
+
 }

@@ -25,6 +25,7 @@ public class Sheet4 {
         System.out.println("Our implementation CrossValidation (k=10) on cars: ");
         DecisionTree dt = new DecisionTree();
         dt.stratifiedCrossValidation(instancesReordered,10);
+        dt.plotModel();
         System.out.println("Weka J48 CrossValidation (k=10) on cars: ");
         J48Weka j48 = new J48Weka();
         j48.stratifiedCrossValidation(instancesReordered,10);

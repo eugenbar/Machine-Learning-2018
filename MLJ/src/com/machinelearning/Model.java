@@ -3,6 +3,7 @@ package com.machinelearning;
 import weka.core.Instance;
 import weka.core.Instances;
 
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 
 public abstract class Model extends Evaluation {
@@ -17,7 +18,10 @@ public abstract class Model extends Evaluation {
     public abstract void print();
 
     public abstract void build(Instances d);
-    public abstract void plot();
+    public abstract BufferedImage getPlotBuffer();
+    public void plotModel(){
+        MyJframe mJF = new MyJframe(getPlotBuffer());
+    }
 
     //Makes new predictions and deletes the old ones if any were made before
     public void predict(Instances instances){

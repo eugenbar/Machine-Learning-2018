@@ -3,6 +3,8 @@ package com.machinelearning;
 import weka.core.Instance;
 import weka.core.Instances;
 
+import java.awt.image.BufferedImage;
+
 public class Bagging extends Model {
     @Override
     protected void predict(Instance instance) {
@@ -20,7 +22,9 @@ public class Bagging extends Model {
     }
 
     @Override
-    public void plot() {
-
+    public BufferedImage getPlotBuffer() {
+        return null;
     }
+
+
 }

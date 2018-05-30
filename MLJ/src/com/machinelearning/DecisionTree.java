@@ -5,6 +5,9 @@ import weka.core.Instance;
 import weka.core.Instances;
 import weka.filters.unsupervised.attribute.Remove;
 
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import java.text.DecimalFormat;
 import java.util.ArrayList;
 
 public class DecisionTree<D,A> extends Model {
@@ -32,8 +35,47 @@ public class DecisionTree<D,A> extends Model {
     }
 
     @Override
-    public void plot() {
-        MyJframe jf = new MyJframe();
+    public BufferedImage getPlotBuffer() {
+        ArrayList<TreeNode>nodes = getBFSNodes();
+        int maxDepth = nodes.get(nodes.size()-1).getDepth();
+        BufferedImage bf;
+        int h=maxDepth*200+200,w=(int)(Math.pow(2.0,(double)maxDepth)*100+300);
+        System.out.println(w+" ||||| "+h);
+        bf = new BufferedImage(w,h,BufferedImage.TYPE_INT_RGB);
+        for(int x=0;x<w;x++){
+            for(int y=0;y<h;y++){
+                bf.setRGB(x,y,Color.WHITE.getRGB());
+            }
+        }
+        Graphics2D g2d = (Graphics2D) bf.getGraphics();
+        int max =maxDepth+2;
+        int counter =1;
+        for(int i=nodes.size()-1;i>=0;i--){
+            if (nodes.get(i).getDepth()==maxDepth){
+                this.addNode(nodes.get(i),counter*100,h-(max-maxDepth)*100,g2d);
+                counter++;
+            }else {
+                counter=1;
+                maxDepth--;
+                this.addNode(nodes.get(i),counter*100,h-(max-maxDepth)*100,g2d);
+                counter++;
+            }
+
+        }
+
+        return bf;
+    }
+    private void addNode(TreeNode node,int x,int y,Graphics2D g2d){
+        if (node.getD()=="root")g2d.setColor(Color.RED);
+        else if (node.getA()=="leaf")g2d.setColor(Color.GREEN);
+        else g2d.setColor(Color.ORANGE);
+        g2d.fillRect(x,y,75,75);
+        g2d.setColor(Color.BLACK);
+        g2d.drawString(node.getD().toString(), x, y+10);
+        g2d.drawString(node.getA().toString(), x, y+25);
+        DecimalFormat df = new DecimalFormat("#.###");
+        g2d.drawString(String.valueOf(df.format(node.getEntropy())), x, y+40);
+        g2d.drawString(node.getClassCountsList().toString(), x, y+55);
     }
 
     public void buildTree(Instances d, TreeNode<D,A> node){
@@ -156,5 +198,35 @@ public class DecisionTree<D,A> extends Model {
     public int getMaxDepth(){
         return this.maxDepth;
     }
+    public int getTreeDepth(TreeNode node){
 
+            for (int i = 0; i < node.getChildren().size(); i++) {
+                return getTreeDepth((TreeNode) node.getChildren().get(i));
+
+            }
+
+        return node.getDepth();
+    }
+    public int getTreeDepth(){
+        return getTreeDepth(treeRoot);
+    }
+    public ArrayList<TreeNode> getBFSNodes(){
+        ArrayList<TreeNode> r=new ArrayList<>();
+        ArrayList<TreeNode> ar=new ArrayList<>();
+        ar.add(treeRoot);
+        while (ar.size()>0){
+            TreeNode node=null;
+            if(ar.size()-1<0){
+                node=null;
+            }else {
+                node=ar.get(0);
+                r.add(node);
+                ar.remove(0);
+                for (int i = 0; i < node.getChildren().size(); i++) {
+                    ar.add((TreeNode) node.getChildren().get(i));
+                }
+            }
+        }
+        return r;
+    }
 }

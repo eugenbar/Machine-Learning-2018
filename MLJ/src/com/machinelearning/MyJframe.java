@@ -1,28 +1,34 @@
 package com.machinelearning;
 
-import com.mathematischemodellierung.Object3D;
+import com.com.controls.Scrolling;
 
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.*;
 import java.awt.image.BufferStrategy;
 import java.awt.image.BufferedImage;
-import java.awt.image.DataBufferInt;
 
 //Used for Model.plot
-public class MyJframe extends JFrame {
+public class MyJframe extends Scrolling implements MouseMotionListener {
     private double lastFpsTime,fps;
     private boolean gameRunning=true;
     private BufferedImage image;
-    private int width = 800;
-    private int height = 600;
+    private int width = 1100;
+    private int height = 800;
     private int[] pixels;
-    public MyJframe(){
+    private BufferedImage buffer;
+    private int x=0,y=0;
+    public MyJframe(BufferedImage bf){
         image=new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
-        pixels = ((DataBufferInt) image.getRaster().getDataBuffer()).getData();
-        this.setSize(800, 700);
+        this.setSize(1100, 800);
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+        this.addMouseListener(this);
+        this.addKeyListener(this);
+        this.addMouseMotionListener(this);
+        buffer =bf;
         this.setVisible(true);
-       // this.gameLoop();
+        this.gameLoop();
+
 
     }
 
@@ -65,11 +71,26 @@ public class MyJframe extends JFrame {
 
     private void doGameUpdates(double delta)
     {
-        Graphics2D g2d = (Graphics2D) image.getGraphics();
+        if (x+width+moving[1]<buffer.getWidth()-50)
+            x+=moving[1];
+        if (y+height+moving[2]<buffer.getHeight()-50)
+            y+=moving[2];
+        if (x-moving[3]>0+50)
+            x-=moving[3];
+        if (y-moving[4]>0+50)
+            y-=moving[4];
+        if (moving[1]>0 && !acclerationInc[1])moving[1]--;
+        if (moving[2]>0 && !acclerationInc[2])moving[2]--;
+        if (moving[3]>0 && !acclerationInc[3])moving[3]--;
+        if (moving[4]>0 && !acclerationInc[4])moving[4]--;
+
+
+        //Graphics2D g2d = (Graphics2D) image.getGraphics();
 
        // g2d.drawImage(image,0, 0, getWidth(), getHeight(), null);
-
-        this.paint(g2d);
+        image= buffer.getSubimage(x,y,width,height);
+        //this.paint(g2d);
+        render();
     }
     public void render() {
         BufferStrategy bs = this.getBufferStrategy();
@@ -87,11 +108,11 @@ public class MyJframe extends JFrame {
         }*/
 
         g2d.drawImage(image, 0, 0, getWidth(), getHeight(), null);
-        for(int x=0;x<getWidth();x++){
-            for(int y=0;y<getHeight();y++){
-                image.setRGB(x,y,Color.WHITE.getRGB());
+       /* for(int x=0;x<width;x++){
+            for(int y=0;y<height;y++){
+                image.setRGB(x,y,Color.CYAN.getRGB());
             }
-        }
+        }*/
         //rayList.get(rayList.size()-1).render(g2d,image);
         bs.show();
         g2d.dispose();
@@ -99,8 +120,7 @@ public class MyJframe extends JFrame {
     private void doDrawing(Graphics g) {
         Graphics2D g2d = (Graphics2D) g.create();
 
-        g2d.setColor(new Color(255,0,0));
-        g2d.fillRect(100,100,200,200);
+
 
 
 
@@ -118,4 +138,33 @@ public class MyJframe extends JFrame {
         super.paint(g);
         doDrawing(g);
     }
+
+    @Override
+    public void mouseDragged(MouseEvent e) {
+
+
+    }
+
+    @Override
+    public void mouseMoved(MouseEvent e) {
+
+
+    }
+
+    @Override
+    public void mouseReleased(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseEntered(MouseEvent e) {
+
+    }
+
+    @Override
+    public void mouseExited(MouseEvent e) {
+
+    }
+
+
 }
