@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/MLJ/MLJ.iml" filepath="$PROJECT_DIR$/MLJ/MLJ.iml" />
+      <module fileurl="file://$PROJECT_DIR$/Machine-Learning-2018.iml" filepath="$PROJECT_DIR$/Machine-Learning-2018.iml" />
+      <module fileurl="file://$USER_HOME$/Downloads/Mathematische Modellierung 2/Mathematische Modellierung 2.iml" filepath="$USER_HOME$/Downloads/Mathematische Modellierung 2/Mathematische Modellierung 2.iml" />
+    </modules>
+  </component>
+</project>
