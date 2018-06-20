@@ -14,26 +14,17 @@ public abstract class VectorObject extends DefaultMutableTreeNode {
     }
     public void affineTranslate(double x,double y){
         this.aT.translate(x,y);
-        Enumeration<VectorObject> e = children();
-        while (e.hasMoreElements()) {
-            e.nextElement().affineTranslate(x,y);
-        }
+
 
     }
     public void affineScale(double x,double y){
         this.aT.scale(x,y);
-        Enumeration<VectorObject> e = children();
-        while (e.hasMoreElements()) {
-            e.nextElement().affineScale(x,y);
-        }
+
 
     }
     public void affineRotate(double th){
         this.aT.rotate(th);
-        Enumeration<VectorObject> e = children();
-        while (e.hasMoreElements()) {
-            e.nextElement().affineRotate(th);
-        }
+
 
     }
     public void setAT(AffineTransform aT){
@@ -49,10 +40,7 @@ public abstract class VectorObject extends DefaultMutableTreeNode {
         /*for (VectorObject vo : listVO) {
             vo.isSelected();
         }*/
-        Enumeration<VectorObject> e = children();
-        while (e.hasMoreElements()) {
-            e.nextElement().isSelected();
-        }
+
 
     }
     public void notSelected(){
@@ -60,10 +48,6 @@ public abstract class VectorObject extends DefaultMutableTreeNode {
         /*for (VectorObject vo : listVO) {
             vo.notSelected();
         }*/
-        Enumeration<VectorObject> e = children();
-        while (e.hasMoreElements()) {
-            e.nextElement().notSelected();
-        }
 
     }
     public void draw(Graphics2D g2d) {
@@ -76,10 +60,7 @@ public abstract class VectorObject extends DefaultMutableTreeNode {
         g.setTransform(aT);
         g.setColor(c);
         doDrawing(g);
-        Enumeration<VectorObject> e = children();
-        while (e.hasMoreElements()) {
-            e.nextElement().draw(g);
-        }
+
 
         g.dispose();
     }

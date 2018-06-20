@@ -11,7 +11,11 @@ import java.awt.image.BufferedImage;
 public class J48Weka extends Model {
     Classifier cls;
     Evaluation eval;
+    String[]options;
     J48Weka(){
+    }
+    J48Weka(String[]options){
+        this.options=options;
     }
     @Override
     protected void predict(Instance instance) {
@@ -47,6 +51,7 @@ public class J48Weka extends Model {
     public void build(Instances d) {
         try {
             cls = new J48();
+            ((J48) cls).setOptions(options);
             cls.buildClassifier(d);
         } catch (Exception e) {
             e.printStackTrace();
